@@ -446,7 +446,8 @@ public:
 		 */
 		UE_NODISCARD FORCEINLINE VariableType& Get() const
 		{
-			TSpecVariablePtr<VariableType> VariablePtr = this->Spec->GetVariable<VariableType>(this->Handle);
+			// ReSharper disable once CppRedundantTemplateKeyword
+			TSpecVariablePtr<VariableType> VariablePtr = this->Spec->template GetVariable<VariableType>(this->Handle);
 
 			return VariablePtr->Get();
 		}
