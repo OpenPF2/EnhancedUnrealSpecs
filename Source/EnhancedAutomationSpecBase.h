@@ -314,7 +314,7 @@ public:
 		 *
 		 * @return The hash value.
 		 */
-		friend static uint32 GetTypeHash(const FSpecBlockHandle& SpecHandle)
+		friend uint32 GetTypeHash(const FSpecBlockHandle& SpecHandle)
 		{
 			return ::GetTypeHash(SpecHandle.Handle);
 		}
