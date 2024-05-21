@@ -434,3 +434,11 @@ BEGIN_DEFINE_ENH_SPEC(FLetDemoSpec,
 	});
 END_DEFINE_ENH_SPEC(FLetDemoSpec)
 ```
+
+## Licensing
+As previously mentioned, the code in this repository is licensed under an MIT license for use in Unreal Engine projects.
+As this code was based on code from Epic Games, it cannot be used outside an Unreal Engine project.
+
+This project only re-licenses the automation spec components from OpenPF2 that have been explicitly included in this Git
+repo. All other parts of OpenPF2 are subject to the conditions of the MPL + OGL licenses, as described in [the Core
+OpenPF2 repository](https://github.com/OpenPF2/Core/blob/main/LICENSE.txt).

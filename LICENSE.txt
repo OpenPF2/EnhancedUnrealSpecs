@@ -1,5 +1,19 @@
-MIT License
+Enhanced Automation Specs for Unreal Engine License Terms
+=========================================================
+Material in this project is governed by two different licenses:
+  - The default licensing for code in this repository is the MIT license.
 
+  - Select portions of code have been provided by Epic Games, Inc. for use only
+    with Unreal Engine. Such code is clearly denoted by a file header that reads
+    "Adapted from content that is Copyright Epic Games, Inc." Code contained in
+    files that bear such a notice may only be used in derivative works that are
+    part of a larger, Unreal-Engine-based project according to the terms of the
+    Unreal® Engine End User License Agreement For Publishing (UE EULA). All
+    other use is prohibited.
+
+===============================================================================
+MIT License
+===============================================================================
 Copyright (c) 2023-2024 Guy Elsmore-Paddock
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
