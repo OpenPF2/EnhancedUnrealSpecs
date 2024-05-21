@@ -11,13 +11,13 @@
 // Macro Declarations
 // =====================================================================================================================
 /**
- * This macro is for internal use only. Use BEGIN_DEFINE_PF_SPEC instead.
+ * This macro is for internal use only. Use BEGIN_DEFINE_ENH_SPEC instead.
  */
-#define BEGIN_DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, FileName, LineNumber) \
-	class TClass : public FPF2AutomationSpecBase \
+#define BEGIN_DEFINE_ENH_SPEC_PRIVATE(TClass, PrettyName, TFlags, FileName, LineNumber) \
+	class TClass : public FEnhancedAutomationSpecBase \
 	{ \
 	public: \
-		TClass(const FString& InName) : FPF2AutomationSpecBase(InName) \
+		TClass(const FString& InName) : FEnhancedAutomationSpecBase(InName) \
 		{ \
 			static_assert((TFlags)&EAutomationTestFlags::ApplicationContextMask, "AutomationTest has no application flag. It shouldn't run. See AutomationTest.h."); \
 			static_assert((((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::SmokeFilter) || \
@@ -29,9 +29,9 @@
 						  "All AutomationTests must have exactly 1 filter type specified. See AutomationTest.h."); \
 		} \
 		virtual uint32 GetTestFlags() const override { return TFlags; } \
-		using FPF2AutomationSpecBase::GetTestSourceFileName; \
+		using FEnhancedAutomationSpecBase::GetTestSourceFileName; \
 		virtual FString GetTestSourceFileName() const override { return FileName; } \
-		using FPF2AutomationSpecBase::GetTestSourceFileLine; \
+		using FEnhancedAutomationSpecBase::GetTestSourceFileLine; \
 		virtual int32 GetTestSourceFileLine() const override { return LineNumber; } \
 		virtual FString GetTestSourceFileName(const FString&) const override { return GetTestSourceFileName(); } \
 		virtual int32 GetTestSourceFileLine(const FString&) const override { return GetTestSourceFileLine(); } \
@@ -41,10 +41,10 @@
 		virtual void Define() override;
 
 /**
- * This macro is for internal use only. Use DEFINE_PF_SPEC instead.
+ * This macro is for internal use only. Use DEFINE_ENH_SPEC instead.
  */
-#define DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, FileName, LineNumber) \
-	BEGIN_DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, FileName, LineNumber) \
+#define DEFINE_ENH_SPEC_PRIVATE(TClass, PrettyName, TFlags, FileName, LineNumber) \
+	BEGIN_DEFINE_ENH_SPEC_PRIVATE(TClass, PrettyName, TFlags, FileName, LineNumber) \
 	};
 
 #if WITH_AUTOMATION_WORKER
@@ -57,8 +57,8 @@
 	 * See https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine for examples of
 	 * spec declarations and more information.
 	 *
-	 * If you need to declare member fields, use a combination of the BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros
-	 * instead.
+	 * If you need to declare member fields, use a combination of the BEGIN_DEFINE_ENH_SPEC and END_DEFINE_ENH_SPEC
+	 * macros instead.
 	 *
 	 * @param TClass
 	 *	The name of the automation spec class to define.
@@ -68,8 +68,8 @@
 	 * @param TFlags
 	 *	A bitfield of flags that identify the type of test. See EAutomationTestFlags for the supported options.
 	 */
-	#define DEFINE_PF_SPEC(TClass, PrettyName, TFlags) \
-		DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__) \
+	#define DEFINE_ENH_SPEC(TClass, PrettyName, TFlags) \
+		DEFINE_ENH_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__) \
 		namespace\
 		{\
 			TClass TClass##AutomationSpecInstance(TEXT(#TClass));\
@@ -81,13 +81,13 @@
 	 * This macro is equivalent to Epic's BEGIN_DEFINE_SPEC macro, but using the enhanced automation spec base class
 	 * instead of Epic's original implementation. This macro defines the opening declaration for the spec class,
 	 * allowing you to follow up with declarations of any member fields or custom methods needed by your spec. You must
-	 * complete declaration of the spec with the END_DEFINE_PF_SPEC macro. Below the END_DEFINE_PF_SPEC macro
+	 * complete declaration of the spec with the END_DEFINE_ENH_SPEC macro. Below the END_DEFINE_ENH_SPEC macro
 	 * invocation, your code should implement the Define() method. See
 	 * https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine for examples of spec
 	 * declarations and more information.
 	 *
-	 * If you do not need to declare any member fields or custom methods, use DEFINE_PF_SPEC in place of the
-	 * BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros.
+	 * If you do not need to declare any member fields or custom methods, use DEFINE_ENH_SPEC in place of the
+	 * BEGIN_DEFINE_ENH_SPEC and END_DEFINE_ENH_SPEC macros.
 	 *
 	 * @param TClass
 	 *	The name of the automation spec class being defined.
@@ -97,23 +97,23 @@
 	 * @param TFlags
 	 *	A bitfield of flags that identify the type of test. See EAutomationTestFlags for the supported options.
 	 */
-	#define BEGIN_DEFINE_PF_SPEC(TClass, PrettyName, TFlags) \
-		BEGIN_DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__)
+	#define BEGIN_DEFINE_ENH_SPEC(TClass, PrettyName, TFlags) \
+		BEGIN_DEFINE_ENH_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__)
 
 	/**
 	 * Defines the necessary boilerplate for completing the declaration of a new enhanced automation spec.
 	 *
 	 * This macro is equivalent to Epic's END_DEFINE_SPEC macro, but using the enhanced automation spec base class
-	 * instead of Epic's original implementation. This macro is expected to be used with the BEGIN_DEFINE_PF_SPEC macro,
-	 * and must be invoked after the declaration of any member fields or custom methods of your test.
+	 * instead of Epic's original implementation. This macro is expected to be used with the BEGIN_DEFINE_ENH_SPEC
+	 * macro, and must be invoked after the declaration of any member fields or custom methods of your test.
 	 *
-	 * If you do not need to declare any member fields or custom methods, use DEFINE_PF_SPEC in place of the
-	 * BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros.
+	 * If you do not need to declare any member fields or custom methods, use DEFINE_ENH_SPEC in place of the
+	 * BEGIN_DEFINE_ENH_SPEC and END_DEFINE_ENH_SPEC macros.
 	 *
 	 * @param TClass
 	 *	The name of the automation spec class being defined.
 	 */
-	#define END_DEFINE_PF_SPEC(TClass) \
+	#define END_DEFINE_ENH_SPEC(TClass) \
 		};\
 		namespace\
 		{\
@@ -129,8 +129,8 @@
 	 * See https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine for examples of
 	 * spec declarations and more information.
 	 *
-	 * If you need to declare member fields, use a combination of the BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros
-	 * instead.
+	 * If you need to declare member fields, use a combination of the BEGIN_DEFINE_ENH_SPEC and END_DEFINE_ENH_SPEC
+	 * macros instead.
 	 *
 	 * @param TClass
 	 *	The name of the automation spec class to define.
@@ -140,8 +140,8 @@
 	 * @param TFlags
 	 *	A bitfield of flags that identify the type of test. See EAutomationTestFlags for the supported options.
 	 */
-	#define DEFINE_PF_SPEC(TClass, PrettyName, TFlags) \
-		DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__)
+	#define DEFINE_ENH_SPEC(TClass, PrettyName, TFlags) \
+		DEFINE_ENH_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__)
 
 	/**
 	 * Defines the necessary boilerplate for the opening declaration of a new enhanced automation spec.
@@ -149,13 +149,13 @@
 	 * This macro is equivalent to Epic's BEGIN_DEFINE_SPEC macro, but using the enhanced automation spec base class
 	 * instead of Epic's original implementation. This macro defines the opening declaration for the spec class,
 	 * allowing you to follow up with declarations of any member fields or custom methods needed by your spec. You must
-	 * complete declaration of the spec with the END_DEFINE_PF_SPEC macro. Below the END_DEFINE_PF_SPEC macro
+	 * complete declaration of the spec with the END_DEFINE_ENH_SPEC macro. Below the END_DEFINE_ENH_SPEC macro
 	 * invocation, your code should implement the Define() method. See
 	 * https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine for examples of spec
 	 * declarations and more information.
 	 *
-	 * If you do not need to declare any member fields or custom methods, use DEFINE_PF_SPEC in place of the
-	 * BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros.
+	 * If you do not need to declare any member fields or custom methods, use DEFINE_ENH_SPEC in place of the
+	 * BEGIN_DEFINE_ENH_SPEC and END_DEFINE_ENH_SPEC macros.
 	 *
 	 * @param TClass
 	 *	The name of the automation spec class being defined.
@@ -165,23 +165,23 @@
 	 * @param TFlags
 	 *	A bitfield of flags that identify the type of test. See EAutomationTestFlags for the supported options.
 	 */
-	#define BEGIN_DEFINE_PF_SPEC(TClass, PrettyName, TFlags) \
-		BEGIN_DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__)
+	#define BEGIN_DEFINE_ENH_SPEC(TClass, PrettyName, TFlags) \
+		BEGIN_DEFINE_ENH_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__)
 
 	/**
 	 * Defines the necessary boilerplate for completing the declaration of a new enhanced automation spec.
 	 *
 	 * This macro is equivalent to Epic's END_DEFINE_SPEC macro, but using the enhanced automation spec base class
-	 * instead of Epic's original implementation. This macro is expected to be used with the BEGIN_DEFINE_PF_SPEC macro,
-	 * and must be invoked after the declaration of any member fields or custom methods of your test.
+	 * instead of Epic's original implementation. This macro is expected to be used with the BEGIN_DEFINE_ENH_SPEC
+	 * macro, and must be invoked after the declaration of any member fields or custom methods of your test.
 	 *
-	 * If you do not need to declare any member fields or custom methods, use DEFINE_PF_SPEC in place of the
-	 * BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros.
+	 * If you do not need to declare any member fields or custom methods, use DEFINE_ENH_SPEC in place of the
+	 * BEGIN_DEFINE_ENH_SPEC and END_DEFINE_ENH_SPEC macros.
 	 *
 	 * @param TClass
 	 *	The name of the automation spec class being defined.
 	 */
-	#define END_DEFINE_PF_SPEC(TClass) \
+	#define END_DEFINE_ENH_SPEC(TClass) \
 		};
 #endif
 
@@ -229,13 +229,12 @@
 // Normal Declarations
 // =====================================================================================================================
 /**
- * Automation spec base class used by OpenPF2 automation tests.
+ * Enhanced base class for automation specification ("automation spec") tests.
  *
- * This was adapted and modified from FAutomationSpecBase in the Engine in order to add BeforeAll() capabilities to
- * automation specs. Beyond those enhancements, this class does not contain any OpenPF2-specific test functionality;
- * that functionality exists in the FPF2SpecBase sub-class to ensure clean separation of concerns.
+ * This was adapted and modified from FAutomationSpecBase in the Engine in order to add BeforeAll() and Let()
+ * capabilities to automation specs.
  */
-class FPF2AutomationSpecBase : public FAutomationTestBase, public TSharedFromThis<FPF2AutomationSpecBase>
+class FEnhancedAutomationSpecBase : public FAutomationTestBase, public TSharedFromThis<FEnhancedAutomationSpecBase>
 {
 public:
 	// =================================================================================================================
@@ -401,7 +400,7 @@ public:
 		/**
 		 * The outer test.
 		 */
-		const FPF2AutomationSpecBase* Spec;
+		const FEnhancedAutomationSpecBase* Spec;
 
 	public:
 		// =============================================================================================================
@@ -413,7 +412,7 @@ public:
 		 * @param Spec
 		 *	The outer test.
 		 */
-		explicit TSpecVariable(const FPF2AutomationSpecBase* const Spec) : Spec(Spec)
+		explicit TSpecVariable(const FEnhancedAutomationSpecBase* const Spec) : Spec(Spec)
 		{
 		}
 
@@ -723,7 +722,7 @@ private:
 		/**
 		 * The automation test specification that supplied the code for this command.
 		 */
-		const FPF2AutomationSpecBase* const Spec;
+		const FEnhancedAutomationSpecBase* const Spec;
 
 		/**
 		 * The code to execute for this command.
@@ -749,9 +748,9 @@ private:
 		 * @param bInSkipIfErrored
 		 *	Whether the command should skip execution if the parent specification reports failures in prior tests.
 		 */
-		FSimpleBlockingCommand(const FPF2AutomationSpecBase* const Spec,
-		                       TFunction<void()>                   Work,
-		                       const bool                          bInSkipIfErrored = false) :
+		FSimpleBlockingCommand(const FEnhancedAutomationSpecBase* const Spec,
+		                       TFunction<void()>                        Work,
+		                       const bool                               bInSkipIfErrored = false) :
 			Spec(Spec),
 			Work(MoveTemp(Work)),
 			bSkipIfErrored(bInSkipIfErrored)
@@ -782,7 +781,7 @@ private:
 		/**
 		 * The automation test specification that supplied the code for this command.
 		 */
-		FPF2AutomationSpecBase* const Spec;
+		FEnhancedAutomationSpecBase* const Spec;
 
 		/**
 		 * How the code in this command should be executed (task graph, thread pool, dedicated thread, etc.).
@@ -837,11 +836,11 @@ private:
 		 * @param bSkipIfErrored
 		 *	Whether the command should skip execution if the parent specification reports failures in prior tests.
 		 */
-		FAsyncCommand(FPF2AutomationSpecBase* const Spec,
-		              const EAsyncExecution         Execution,
-		              TFunction<void()>             Work,
-		              const FTimespan&              Timeout,
-		              const bool                    bSkipIfErrored = false) :
+		FAsyncCommand(FEnhancedAutomationSpecBase* const Spec,
+		              const EAsyncExecution              Execution,
+		              TFunction<void()>                  Work,
+		              const FTimespan&                   Timeout,
+		              const bool                         bSkipIfErrored = false) :
 			Spec(Spec),
 			Execution(Execution),
 			Work(MoveTemp(Work)),
@@ -889,7 +888,7 @@ private:
 		/**
 		 * The automation test specification that supplied the code for this command.
 		 */
-		FPF2AutomationSpecBase* const Spec;
+		FEnhancedAutomationSpecBase* const Spec;
 
 		/**
 		 * The code to execute for this command.
@@ -937,7 +936,7 @@ private:
 		 * @param bSkipIfErrored
 		 *	Whether the command should skip execution if the parent specification reports failures in prior tests.
 		 */
-		FMultiFrameLatentCommand(FPF2AutomationSpecBase* const         Spec,
+		FMultiFrameLatentCommand(FEnhancedAutomationSpecBase* const    Spec,
 		                         TFunction<void(const FDoneDelegate&)> Work,
 		                         const FTimespan&                      Timeout,
 		                         const bool                            bSkipIfErrored = false) :
@@ -988,7 +987,7 @@ private:
 		/**
 		 * The automation test specification that supplied the code for this command.
 		 */
-		FPF2AutomationSpecBase* const Spec;
+		FEnhancedAutomationSpecBase* const Spec;
 
 		/**
 		 * How the code in this command should be executed (task graph, thread pool, dedicated thread, etc.).
@@ -1043,7 +1042,7 @@ private:
 		 * @param bSkipIfErrored
 		 *	Whether the command should skip execution if the parent specification reports failures in prior tests.
 		 */
-		FAsyncMultiFrameLatentCommand(FPF2AutomationSpecBase* const         Spec,
+		FAsyncMultiFrameLatentCommand(FEnhancedAutomationSpecBase* const    Spec,
 		                              const EAsyncExecution                 Execution,
 		                              TFunction<void(const FDoneDelegate&)> Work,
 		                              const FTimespan&                      Timeout,
@@ -1249,7 +1248,7 @@ private:
 	 *
 	 * Data within this object is automatically reset between test suite runs.
 	 */
-	class FPF2TestSessionState final
+	class FEnhancedTestSessionState final
 	{
 		// =============================================================================================================
 		// Private Fields
@@ -1271,12 +1270,12 @@ private:
 		/**
 		 * Constructs a new instance.
 		 */
-		explicit FPF2TestSessionState();
+		explicit FEnhancedTestSessionState();
 
 		/**
 		 * Destructor.
 		 */
-		~FPF2TestSessionState();
+		~FEnhancedTestSessionState();
 
 		// =============================================================================================================
 		// Public Instance Methods
@@ -1396,7 +1395,7 @@ private:
 	 *
 	 * This is used to keep track of state that has to be reset between test suite runs.
 	 */
-	TSharedPtr<FPF2TestSessionState> SuiteSessionState;
+	TSharedPtr<FEnhancedTestSessionState> SuiteSessionState;
 
 	/**
 	 * The variables defined for the current test.
@@ -1417,7 +1416,7 @@ public:
 	 * @param bComplexTask
 	 *	Whether this test is complex and should be included in a stress test.
 	 */
-	FPF2AutomationSpecBase(const FString& Name, const bool bComplexTask) :
+	FEnhancedAutomationSpecBase(const FString& Name, const bool bComplexTask) :
 		FAutomationTestBase(Name, bComplexTask),
 		RootDefinitionScope(MakeShareable(new FSpecDefinitionScope())),
 		bHasBeenDefined(false),

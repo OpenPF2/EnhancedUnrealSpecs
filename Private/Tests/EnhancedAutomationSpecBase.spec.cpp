@@ -5,11 +5,11 @@
 
 #include <GameplayEffect.h>
 
-#include "Tests/PF2SpecBase.h"
+#include "Tests/EnhancedAutomationSpecBase.h"
 
-BEGIN_DEFINE_PF_SPEC(FPF2AutomationSpecBaseSpec,
-                     "OpenPF2.AutomationSpecBase",
-                     EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask)
+BEGIN_DEFINE_ENH_SPEC(FEnhancedAutomationSpecBaseSpec,
+                      "BetterUnrealSpecs.EnhancedAutomationSpecBase",
+                      EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask)
 	int32 BeforeAllRunCount1;
 	FString BeforeAllRunOrder1;
 	FString BeforeEachRunOrder1;
@@ -59,9 +59,9 @@ BEGIN_DEFINE_PF_SPEC(FPF2AutomationSpecBaseSpec,
 		{
 		}
 	};
-END_DEFINE_PF_SPEC(FPF2AutomationSpecBaseSpec)
+END_DEFINE_ENH_SPEC(FEnhancedAutomationSpecBaseSpec)
 
-void FPF2AutomationSpecBaseSpec::Define()
+void FEnhancedAutomationSpecBaseSpec::Define()
 {
 	Describe("Let()", [=, this]
 	{

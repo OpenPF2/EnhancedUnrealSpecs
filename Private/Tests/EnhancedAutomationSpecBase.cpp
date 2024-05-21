@@ -1,14 +1,14 @@
 // Adapted from "Runtime/Core/Public/Misc/AutomationTest.h" (Unreal Engine 5.3), which is
 // Copyright Epic Games, Inc. Licensed only for use with Unreal Engine.
 
-#include "Tests/PF2AutomationSpecBase.h"
+#include "Tests/EnhancedAutomationSpecBase.h"
 
 #include <IAutomationControllerModule.h>
 
 // =====================================================================================================================
 // FSimpleBlockingCommand
 // =====================================================================================================================
-bool FPF2AutomationSpecBase::FSimpleBlockingCommand::Update()
+bool FEnhancedAutomationSpecBase::FSimpleBlockingCommand::Update()
 {
 	if (!this->bSkipIfErrored || !this->Spec->HasAnyErrors())
 	{
@@ -21,7 +21,7 @@ bool FPF2AutomationSpecBase::FSimpleBlockingCommand::Update()
 // =====================================================================================================================
 // FAsyncCommand
 // =====================================================================================================================
-bool FPF2AutomationSpecBase::FAsyncCommand::Update()
+bool FEnhancedAutomationSpecBase::FAsyncCommand::Update()
 {
 	if (!this->Future.IsValid())
 	{
@@ -57,7 +57,7 @@ bool FPF2AutomationSpecBase::FAsyncCommand::Update()
 	return false;
 }
 
-void FPF2AutomationSpecBase::FAsyncCommand::Done()
+void FEnhancedAutomationSpecBase::FAsyncCommand::Done()
 {
 	if (this->Future.IsValid())
 	{
@@ -65,7 +65,7 @@ void FPF2AutomationSpecBase::FAsyncCommand::Done()
 	}
 }
 
-void FPF2AutomationSpecBase::FAsyncCommand::Reset()
+void FEnhancedAutomationSpecBase::FAsyncCommand::Reset()
 {
 	// Reset the status for the next potential run of this command.
 	this->bDone = false;
@@ -76,7 +76,7 @@ void FPF2AutomationSpecBase::FAsyncCommand::Reset()
 // =====================================================================================================================
 // FMultiFrameLatentCommand
 // =====================================================================================================================
-bool FPF2AutomationSpecBase::FMultiFrameLatentCommand::Update()
+bool FEnhancedAutomationSpecBase::FMultiFrameLatentCommand::Update()
 {
 	if (!this->bHasStartedRunning)
 	{
@@ -110,7 +110,7 @@ bool FPF2AutomationSpecBase::FMultiFrameLatentCommand::Update()
 	return false;
 }
 
-void FPF2AutomationSpecBase::FMultiFrameLatentCommand::Done()
+void FEnhancedAutomationSpecBase::FMultiFrameLatentCommand::Done()
 {
 	if (this->bHasStartedRunning)
 	{
@@ -118,7 +118,7 @@ void FPF2AutomationSpecBase::FMultiFrameLatentCommand::Done()
 	}
 }
 
-void FPF2AutomationSpecBase::FMultiFrameLatentCommand::Reset()
+void FEnhancedAutomationSpecBase::FMultiFrameLatentCommand::Reset()
 {
 	// Reset the status for the next potential run of this command.
 	this->bDone              = false;
@@ -128,7 +128,7 @@ void FPF2AutomationSpecBase::FMultiFrameLatentCommand::Reset()
 // =====================================================================================================================
 // FAsyncMultiFrameLatentCommand
 // =====================================================================================================================
-bool FPF2AutomationSpecBase::FAsyncMultiFrameLatentCommand::Update()
+bool FEnhancedAutomationSpecBase::FAsyncMultiFrameLatentCommand::Update()
 {
 	if (!this->Future.IsValid())
 	{
@@ -163,7 +163,7 @@ bool FPF2AutomationSpecBase::FAsyncMultiFrameLatentCommand::Update()
 	return false;
 }
 
-void FPF2AutomationSpecBase::FAsyncMultiFrameLatentCommand::Done()
+void FEnhancedAutomationSpecBase::FAsyncMultiFrameLatentCommand::Done()
 {
 	if (this->Future.IsValid())
 	{
@@ -171,7 +171,7 @@ void FPF2AutomationSpecBase::FAsyncMultiFrameLatentCommand::Done()
 	}
 }
 
-void FPF2AutomationSpecBase::FAsyncMultiFrameLatentCommand::Reset()
+void FEnhancedAutomationSpecBase::FAsyncMultiFrameLatentCommand::Reset()
 {
 	// Reset the status for the next potential run of this command.
 	this->bDone = false;
@@ -182,7 +182,7 @@ void FPF2AutomationSpecBase::FAsyncMultiFrameLatentCommand::Reset()
 // =====================================================================================================================
 // FSpecBlockHandle
 // =====================================================================================================================
-void FPF2AutomationSpecBase::FSpecBlockHandle::Assign()
+void FEnhancedAutomationSpecBase::FSpecBlockHandle::Assign()
 {
 	static int32 HandleCounter = 1;
 
@@ -190,20 +190,20 @@ void FPF2AutomationSpecBase::FSpecBlockHandle::Assign()
 }
 
 // =====================================================================================================================
-// FPF2TestSessionState
+// FEnhancedTestSessionState
 // =====================================================================================================================
-FPF2AutomationSpecBase::FPF2TestSessionState::FPF2TestSessionState()
+FEnhancedAutomationSpecBase::FEnhancedTestSessionState::FEnhancedTestSessionState()
 {
 	const IAutomationControllerManagerPtr AutomationControllerManager = this->GetAutomationController();
 
 	if (AutomationControllerManager.IsValid())
 	{
 		this->TestDelegateHandle =
-			AutomationControllerManager->OnTestsComplete().AddRaw(this, &FPF2TestSessionState::ClearState);
+			AutomationControllerManager->OnTestsComplete().AddRaw(this, &FEnhancedTestSessionState::ClearState);
 	}
 }
 
-FPF2AutomationSpecBase::FPF2TestSessionState::~FPF2TestSessionState()
+FEnhancedAutomationSpecBase::FEnhancedTestSessionState::~FEnhancedTestSessionState()
 {
 	const IAutomationControllerManagerPtr AutomationControllerManager = this->GetAutomationController();
 
@@ -213,18 +213,18 @@ FPF2AutomationSpecBase::FPF2TestSessionState::~FPF2TestSessionState()
 	}
 }
 
-bool FPF2AutomationSpecBase::FPF2TestSessionState::HasBlockRun(const FSpecBlockHandle& BlockHandle) const
+bool FEnhancedAutomationSpecBase::FEnhancedTestSessionState::HasBlockRun(const FSpecBlockHandle& BlockHandle) const
 {
 	return this->BlocksRun.Contains(BlockHandle);
 }
 
-void FPF2AutomationSpecBase::FPF2TestSessionState::MarkBlockAsRun(const FSpecBlockHandle& BlockHandle)
+void FEnhancedAutomationSpecBase::FEnhancedTestSessionState::MarkBlockAsRun(const FSpecBlockHandle& BlockHandle)
 {
 	check(!this->HasBlockRun(BlockHandle));
 	this->BlocksRun.Add(BlockHandle);
 }
 
-IAutomationControllerManagerPtr FPF2AutomationSpecBase::FPF2TestSessionState::GetAutomationController()
+IAutomationControllerManagerPtr FEnhancedAutomationSpecBase::FEnhancedTestSessionState::GetAutomationController()
 {
 	IAutomationControllerManagerPtr Result;
 
@@ -239,15 +239,15 @@ IAutomationControllerManagerPtr FPF2AutomationSpecBase::FPF2TestSessionState::Ge
 	return Result;
 }
 
-void FPF2AutomationSpecBase::FPF2TestSessionState::ClearState()
+void FEnhancedAutomationSpecBase::FEnhancedTestSessionState::ClearState()
 {
 	this->BlocksRun.Empty();
 }
 
 // =====================================================================================================================
-// FPF2AutomationSpecBase
+// FEnhancedAutomationSpecBase
 // =====================================================================================================================
-FString FPF2AutomationSpecBase::GetTestSourceFileName(const FString& InTestName) const
+FString FEnhancedAutomationSpecBase::GetTestSourceFileName(const FString& InTestName) const
 {
 	FString TestId = InTestName;
 
@@ -266,7 +266,7 @@ FString FPF2AutomationSpecBase::GetTestSourceFileName(const FString& InTestName)
 	return FAutomationTestBase::GetTestSourceFileName();
 }
 
-int32 FPF2AutomationSpecBase::GetTestSourceFileLine(const FString& InTestName) const
+int32 FEnhancedAutomationSpecBase::GetTestSourceFileLine(const FString& InTestName) const
 {
 	FString TestId = InTestName;
 
@@ -285,7 +285,7 @@ int32 FPF2AutomationSpecBase::GetTestSourceFileLine(const FString& InTestName) c
 	return FAutomationTestBase::GetTestSourceFileLine();
 }
 
-void FPF2AutomationSpecBase::GetTests(TArray<FString>& OutBeautifiedNames, TArray<FString>& OutTestCommands) const
+void FEnhancedAutomationSpecBase::GetTests(TArray<FString>& OutBeautifiedNames, TArray<FString>& OutTestCommands) const
 {
 	TArray<TSharedRef<FSpec>> Specs;
 
@@ -302,13 +302,13 @@ void FPF2AutomationSpecBase::GetTests(TArray<FString>& OutBeautifiedNames, TArra
 	}
 }
 
-bool FPF2AutomationSpecBase::RunTest(const FString& InParameters)
+bool FEnhancedAutomationSpecBase::RunTest(const FString& InParameters)
 {
 	this->EnsureDefinitions();
 
 	if (!this->SuiteSessionState.IsValid())
 	{
-		this->SuiteSessionState = MakeShareable(new FPF2TestSessionState());
+		this->SuiteSessionState = MakeShareable(new FEnhancedTestSessionState());
 	}
 
 	if (InParameters.IsEmpty())
@@ -339,7 +339,7 @@ bool FPF2AutomationSpecBase::RunTest(const FString& InParameters)
 	return true;
 }
 
-void FPF2AutomationSpecBase::Describe(const FString& InDescription, const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::Describe(const FString& InDescription, const TFunction<void()>& DoWork)
 {
 	LLM_SCOPE_BYNAME(TEXT("AutomationTest/Framework"));
 
@@ -364,7 +364,7 @@ void FPF2AutomationSpecBase::Describe(const FString& InDescription, const TFunct
 	}
 }
 
-void FPF2AutomationSpecBase::It(const FString& InDescription, const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::It(const FString& InDescription, const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 	const FProgramCounterSymbolInfo&       TopOfStack   = GetTopOfCallStack();
@@ -386,9 +386,9 @@ void FPF2AutomationSpecBase::It(const FString& InDescription, const TFunction<vo
 	this->PopDescription();
 }
 
-void FPF2AutomationSpecBase::It(const FString&           InDescription,
-                                const EAsyncExecution    Execution,
-                                const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::It(const FString&           InDescription,
+                                     const EAsyncExecution    Execution,
+                                     const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 	const FProgramCounterSymbolInfo&       TopOfStack   = GetTopOfCallStack();
@@ -412,10 +412,10 @@ void FPF2AutomationSpecBase::It(const FString&           InDescription,
 	this->PopDescription();
 }
 
-void FPF2AutomationSpecBase::It(const FString&           InDescription,
-                                const EAsyncExecution    Execution,
-                                const FTimespan&         Timeout,
-                                const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::It(const FString&           InDescription,
+                                     const EAsyncExecution    Execution,
+                                     const FTimespan&         Timeout,
+                                     const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 	const FProgramCounterSymbolInfo&       TopOfStack   = GetTopOfCallStack();
@@ -437,7 +437,8 @@ void FPF2AutomationSpecBase::It(const FString&           InDescription,
 	this->PopDescription();
 }
 
-void FPF2AutomationSpecBase::LatentIt(const FString& InDescription, const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentIt(const FString& InDescription,
+                                           const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 	const FProgramCounterSymbolInfo&       TopOfStack   = GetTopOfCallStack();
@@ -461,9 +462,9 @@ void FPF2AutomationSpecBase::LatentIt(const FString& InDescription, const TFunct
 	this->PopDescription();
 }
 
-void FPF2AutomationSpecBase::LatentIt(const FString&                               InDescription,
-                                      const FTimespan&                             Timeout,
-                                      const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentIt(const FString&                               InDescription,
+                                           const FTimespan&                             Timeout,
+                                           const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 	const FProgramCounterSymbolInfo&       TopOfStack   = GetTopOfCallStack();
@@ -485,9 +486,9 @@ void FPF2AutomationSpecBase::LatentIt(const FString&                            
 	this->PopDescription();
 }
 
-void FPF2AutomationSpecBase::LatentIt(const FString&                               InDescription,
-                                      const EAsyncExecution                        Execution,
-                                      const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentIt(const FString&                               InDescription,
+                                           const EAsyncExecution                        Execution,
+                                           const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 	const FProgramCounterSymbolInfo&       TopOfStack   = GetTopOfCallStack();
@@ -517,10 +518,10 @@ void FPF2AutomationSpecBase::LatentIt(const FString&                            
 	this->PopDescription();
 }
 
-void FPF2AutomationSpecBase::LatentIt(const FString&                               InDescription,
-                                      const EAsyncExecution                        Execution,
-                                      const FTimespan&                             Timeout,
-                                      const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentIt(const FString&                               InDescription,
+                                           const EAsyncExecution                        Execution,
+                                           const FTimespan&                             Timeout,
+                                           const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 	const FProgramCounterSymbolInfo&       TopOfStack   = GetTopOfCallStack();
@@ -545,7 +546,7 @@ void FPF2AutomationSpecBase::LatentIt(const FString&                            
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void FPF2AutomationSpecBase::BeforeAll(const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::BeforeAll(const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->GetCurrentScope();
 	const FSpecBlockHandle                 BlockHandle;
@@ -556,7 +557,7 @@ void FPF2AutomationSpecBase::BeforeAll(const TFunction<void()>& DoWork)
 	);
 }
 
-void FPF2AutomationSpecBase::BeforeAll(const EAsyncExecution Execution, const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::BeforeAll(const EAsyncExecution Execution, const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->GetCurrentScope();
 	const FSpecBlockHandle                 BlockHandle;
@@ -569,9 +570,9 @@ void FPF2AutomationSpecBase::BeforeAll(const EAsyncExecution Execution, const TF
 	);
 }
 
-void FPF2AutomationSpecBase::BeforeAll(const EAsyncExecution    Execution,
-                                       const FTimespan&         Timeout,
-                                       const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::BeforeAll(const EAsyncExecution    Execution,
+                                            const FTimespan&         Timeout,
+                                            const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->GetCurrentScope();
 	const FSpecBlockHandle                 BlockHandle;
@@ -582,7 +583,7 @@ void FPF2AutomationSpecBase::BeforeAll(const EAsyncExecution    Execution,
 	);
 }
 
-void FPF2AutomationSpecBase::LatentBeforeAll(const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentBeforeAll(const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope>       CurrentScope = this->GetCurrentScope();
 	const FSpecBlockHandle                       BlockHandle;
@@ -593,8 +594,8 @@ void FPF2AutomationSpecBase::LatentBeforeAll(const TFunction<void(const FDoneDel
 	);
 }
 
-void FPF2AutomationSpecBase::LatentBeforeAll(const FTimespan&                             Timeout,
-                                             const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentBeforeAll(const FTimespan&                             Timeout,
+                                                  const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope>       CurrentScope = this->GetCurrentScope();
 	const FSpecBlockHandle                       BlockHandle;
@@ -605,8 +606,8 @@ void FPF2AutomationSpecBase::LatentBeforeAll(const FTimespan&                   
 	);
 }
 
-void FPF2AutomationSpecBase::LatentBeforeAll(const EAsyncExecution                        Execution,
-                                             const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentBeforeAll(const EAsyncExecution                        Execution,
+                                                  const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope>       CurrentScope = this->GetCurrentScope();
 	const FSpecBlockHandle                       BlockHandle;
@@ -625,9 +626,9 @@ void FPF2AutomationSpecBase::LatentBeforeAll(const EAsyncExecution              
 	);
 }
 
-void FPF2AutomationSpecBase::LatentBeforeAll(const EAsyncExecution                        Execution,
-                                             const FTimespan&                             Timeout,
-                                             const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentBeforeAll(const EAsyncExecution                        Execution,
+                                                  const FTimespan&                             Timeout,
+                                                  const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope>       CurrentScope = this->GetCurrentScope();
 	const FSpecBlockHandle                       BlockHandle;
@@ -640,7 +641,7 @@ void FPF2AutomationSpecBase::LatentBeforeAll(const EAsyncExecution              
 	);
 }
 
-void FPF2AutomationSpecBase::BeforeEach(const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::BeforeEach(const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
@@ -649,7 +650,7 @@ void FPF2AutomationSpecBase::BeforeEach(const TFunction<void()>& DoWork)
 	);
 }
 
-void FPF2AutomationSpecBase::BeforeEach(const EAsyncExecution Execution, const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::BeforeEach(const EAsyncExecution Execution, const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
@@ -658,8 +659,8 @@ void FPF2AutomationSpecBase::BeforeEach(const EAsyncExecution Execution, const T
 	);
 }
 
-void FPF2AutomationSpecBase::BeforeEach(const EAsyncExecution Execution, const FTimespan& Timeout,
-                                        const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::BeforeEach(const EAsyncExecution Execution, const FTimespan& Timeout,
+                                             const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
@@ -668,7 +669,7 @@ void FPF2AutomationSpecBase::BeforeEach(const EAsyncExecution Execution, const F
 	);
 }
 
-void FPF2AutomationSpecBase::LatentBeforeEach(const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentBeforeEach(const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
@@ -677,8 +678,8 @@ void FPF2AutomationSpecBase::LatentBeforeEach(const TFunction<void(const FDoneDe
 	);
 }
 
-void FPF2AutomationSpecBase::LatentBeforeEach(const FTimespan& Timeout,
-                                              const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentBeforeEach(const FTimespan& Timeout,
+                                                   const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
@@ -687,8 +688,8 @@ void FPF2AutomationSpecBase::LatentBeforeEach(const FTimespan& Timeout,
 	);
 }
 
-void FPF2AutomationSpecBase::LatentBeforeEach(const EAsyncExecution Execution,
-                                              const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentBeforeEach(const EAsyncExecution Execution,
+                                                   const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
@@ -699,9 +700,9 @@ void FPF2AutomationSpecBase::LatentBeforeEach(const EAsyncExecution Execution,
 	);
 }
 
-void FPF2AutomationSpecBase::LatentBeforeEach(const EAsyncExecution                        Execution,
-                                              const FTimespan&                             Timeout,
-                                              const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentBeforeEach(const EAsyncExecution                        Execution,
+                                                   const FTimespan&                             Timeout,
+                                                   const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
@@ -710,14 +711,14 @@ void FPF2AutomationSpecBase::LatentBeforeEach(const EAsyncExecution             
 	);
 }
 
-void FPF2AutomationSpecBase::AfterEach(const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::AfterEach(const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
 	CurrentScope->AfterEach.Push(MakeShareable(new FSimpleBlockingCommand(this, DoWork)));
 }
 
-void FPF2AutomationSpecBase::AfterEach(const EAsyncExecution Execution, const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::AfterEach(const EAsyncExecution Execution, const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
@@ -726,32 +727,32 @@ void FPF2AutomationSpecBase::AfterEach(const EAsyncExecution Execution, const TF
 	);
 }
 
-void FPF2AutomationSpecBase::AfterEach(const EAsyncExecution    Execution,
-                                       const FTimespan&         Timeout,
-                                       const TFunction<void()>& DoWork)
+void FEnhancedAutomationSpecBase::AfterEach(const EAsyncExecution    Execution,
+                                            const FTimespan&         Timeout,
+                                            const TFunction<void()>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
 	CurrentScope->AfterEach.Push(MakeShareable(new FAsyncCommand(this, Execution, DoWork, Timeout)));
 }
 
-void FPF2AutomationSpecBase::LatentAfterEach(const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentAfterEach(const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
 	CurrentScope->AfterEach.Push(MakeShareable(new FMultiFrameLatentCommand(this, DoWork, this->DefaultTimeout)));
 }
 
-void FPF2AutomationSpecBase::LatentAfterEach(const FTimespan& Timeout,
-                                             const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentAfterEach(const FTimespan& Timeout,
+                                                  const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
 	CurrentScope->AfterEach.Push(MakeShareable(new FMultiFrameLatentCommand(this, DoWork, Timeout)));
 }
 
-void FPF2AutomationSpecBase::LatentAfterEach(const EAsyncExecution Execution,
-                                             const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentAfterEach(const EAsyncExecution Execution,
+                                                  const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
@@ -760,25 +761,25 @@ void FPF2AutomationSpecBase::LatentAfterEach(const EAsyncExecution Execution,
 	);
 }
 
-void FPF2AutomationSpecBase::LatentAfterEach(const EAsyncExecution                        Execution,
-                                             const FTimespan&                             Timeout,
-                                             const TFunction<void(const FDoneDelegate&)>& DoWork)
+void FEnhancedAutomationSpecBase::LatentAfterEach(const EAsyncExecution                        Execution,
+                                                  const FTimespan&                             Timeout,
+                                                  const TFunction<void(const FDoneDelegate&)>& DoWork)
 {
 	const TSharedRef<FSpecDefinitionScope> CurrentScope = this->DefinitionScopeStack.Last();
 
 	CurrentScope->AfterEach.Push(MakeShareable(new FAsyncMultiFrameLatentCommand(this, Execution, DoWork, Timeout)));
 }
 
-void FPF2AutomationSpecBase::EnsureDefinitions() const
+void FEnhancedAutomationSpecBase::EnsureDefinitions() const
 {
 	if (!this->bHasBeenDefined)
 	{
-		const_cast<FPF2AutomationSpecBase*>(this)->Define();
-		const_cast<FPF2AutomationSpecBase*>(this)->PostDefine();
+		const_cast<FEnhancedAutomationSpecBase*>(this)->Define();
+		const_cast<FEnhancedAutomationSpecBase*>(this)->PostDefine();
 	}
 }
 
-void FPF2AutomationSpecBase::PostDefine()
+void FEnhancedAutomationSpecBase::PostDefine()
 {
 	TArray<TSharedRef<FSpecDefinitionScope>>     Stack;
 	TArray<TSharedRef<IAutomationLatentCommand>> BeforeAll,
@@ -873,7 +874,7 @@ void FPF2AutomationSpecBase::PostDefine()
 	this->bHasBeenDefined = true;
 }
 
-void FPF2AutomationSpecBase::Redefine()
+void FEnhancedAutomationSpecBase::Redefine()
 {
 	this->DescriptionStack.Empty();
 	this->IdToSpecMap.Empty();
@@ -883,7 +884,7 @@ void FPF2AutomationSpecBase::Redefine()
 	this->bHasBeenDefined = false;
 }
 
-FString FPF2AutomationSpecBase::GetId() const
+FString FEnhancedAutomationSpecBase::GetId() const
 {
 	if (this->DescriptionStack.Last().EndsWith(TEXT("]")))
 	{
@@ -935,7 +936,7 @@ FString FPF2AutomationSpecBase::GetId() const
 	}
 }
 
-FString FPF2AutomationSpecBase::GetDescription() const
+FString FEnhancedAutomationSpecBase::GetDescription() const
 {
 	FString CompleteDescription;
 
@@ -968,27 +969,27 @@ FString FPF2AutomationSpecBase::GetDescription() const
 	return CompleteDescription;
 }
 
-TSharedRef<TArray<FProgramCounterSymbolInfo>> FPF2AutomationSpecBase::GetCallStack()
+TSharedRef<TArray<FProgramCounterSymbolInfo>> FEnhancedAutomationSpecBase::GetCallStack()
 {
-	QUICK_SCOPE_CYCLE_COUNTER(STAT_FPF2AutomationSpecBase_GetStack);
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_FEnhancedAutomationSpecBase_GetStack);
 
 	return MakeShared<TArray<FProgramCounterSymbolInfo>>(
 		FAutomationTestFramework::NeedSkipStackWalk() ? SkipCallStackWalk() : CallStackWalk()
 	);
 }
 
-TArray<FProgramCounterSymbolInfo> FPF2AutomationSpecBase::CallStackWalk()
+TArray<FProgramCounterSymbolInfo> FEnhancedAutomationSpecBase::CallStackWalk()
 {
-	QUICK_SCOPE_CYCLE_COUNTER(STAT_FPF2AutomationSpecBase_StackWalk);
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_FEnhancedAutomationSpecBase_StackWalk);
 	LLM_SCOPE_BYNAME(TEXT("AutomationTest/Framework"));
 	SAFE_GETSTACK(Stack, 3, 1);
 
 	return Stack;
 }
 
-TArray<FProgramCounterSymbolInfo> FPF2AutomationSpecBase::SkipCallStackWalk()
+TArray<FProgramCounterSymbolInfo> FEnhancedAutomationSpecBase::SkipCallStackWalk()
 {
-	QUICK_SCOPE_CYCLE_COUNTER(STAT_FPF2AutomationSpecBase_SkipStackWalk);
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_FEnhancedAutomationSpecBase_SkipStackWalk);
 	LLM_SCOPE_BYNAME(TEXT("AutomationTest/Framework"));
 
 	TArray<FProgramCounterSymbolInfo> Stack;
@@ -1002,19 +1003,19 @@ TArray<FProgramCounterSymbolInfo> FPF2AutomationSpecBase::SkipCallStackWalk()
 	return Stack;
 }
 
-void FPF2AutomationSpecBase::PushDescription(const FString& InDescription)
+void FEnhancedAutomationSpecBase::PushDescription(const FString& InDescription)
 {
 	LLM_SCOPE_BYNAME(TEXT("AutomationTest/Framework"));
 
 	this->DescriptionStack.Add(InDescription);
 }
 
-void FPF2AutomationSpecBase::PopDescription()
+void FEnhancedAutomationSpecBase::PopDescription()
 {
 	this->DescriptionStack.RemoveAt(this->DescriptionStack.Num() - 1);
 }
 
-TFunction<void()> FPF2AutomationSpecBase::CreateRunWorkOnceWrapper(const FSpecBlockHandle&  BlockHandle,
+TFunction<void()> FEnhancedAutomationSpecBase::CreateRunWorkOnceWrapper(const FSpecBlockHandle&  BlockHandle,
                                                                    const TFunction<void()>& DoWork) const
 {
 	return [=, this]
@@ -1029,7 +1030,7 @@ TFunction<void()> FPF2AutomationSpecBase::CreateRunWorkOnceWrapper(const FSpecBl
 	};
 }
 
-TFunction<void(const FDoneDelegate&)> FPF2AutomationSpecBase::CreateRunWorkOnceWrapper(
+TFunction<void(const FDoneDelegate&)> FEnhancedAutomationSpecBase::CreateRunWorkOnceWrapper(
 	const FSpecBlockHandle&                      BlockHandle,
 	const TFunction<void(const FDoneDelegate&)>& DoWork) const
 {
@@ -1045,7 +1046,7 @@ TFunction<void(const FDoneDelegate&)> FPF2AutomationSpecBase::CreateRunWorkOnceW
 	};
 }
 
-void FPF2AutomationSpecBase::RunSpec(const TSharedRef<FSpec>& SpecToRun)
+void FEnhancedAutomationSpecBase::RunSpec(const TSharedRef<FSpec>& SpecToRun)
 {
 	FAutomationTestFramework& AutomationTestFramework = FAutomationTestFramework::GetInstance();
 	FSpecVariableScope&       Variables               = SpecToRun->Variables;
