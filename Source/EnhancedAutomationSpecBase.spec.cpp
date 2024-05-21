@@ -5,7 +5,7 @@
 
 #include <GameplayEffect.h>
 
-#include "Tests/EnhancedAutomationSpecBase.h"
+#include "EnhancedAutomationSpecBase.h"
 
 BEGIN_DEFINE_ENH_SPEC(FEnhancedAutomationSpecBaseSpec,
                       "EnhancedUnrealSpecs.EnhancedAutomationSpecBase",

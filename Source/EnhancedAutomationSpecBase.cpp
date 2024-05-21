@@ -1,7 +1,7 @@
 // Adapted from "Runtime/Core/Public/Misc/AutomationTest.h" (Unreal Engine 5.3), which is
 // Copyright Epic Games, Inc. Licensed only for use with Unreal Engine.
 
-#include "Tests/EnhancedAutomationSpecBase.h"
+#include "EnhancedAutomationSpecBase.h"
 
 #include <IAutomationControllerModule.h>
 
