@@ -247,10 +247,10 @@ public:
 	// =================================================================================================================
 	struct FSpecBlockHandle;
 
+private:
 	template <typename VariableType>
 	class TSpecLet;
 
-private:
 	class FSpecLetWildcard;
 
 public:
