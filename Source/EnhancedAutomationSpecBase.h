@@ -22,7 +22,7 @@
 	class TClass : public FEnhancedAutomationSpecBase \
 	{ \
 	public: \
-		TClass(const FString& InName) : FEnhancedAutomationSpecBase(InName) \
+		TClass(const FString& InName) : FEnhancedAutomationSpecBase(InName, false) \
 		{ \
 			static_assert((TFlags)&EAutomationTestFlags::ApplicationContextMask, "AutomationTest has no application flag. It shouldn't run. See AutomationTest.h."); \
 			static_assert((((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::SmokeFilter) || \
