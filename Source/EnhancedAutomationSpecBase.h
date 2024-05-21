@@ -430,7 +430,7 @@ public:
 		 * @return
 		 *	The block handle for this variable.
 		 */
-		FORCEINLINE UE_NODISCARD FSpecBlockHandle GetHandle() const
+		UE_NODISCARD FORCEINLINE FSpecBlockHandle GetHandle() const
 		{
 			return this->Handle;
 		}
@@ -444,7 +444,7 @@ public:
 		 * @return
 		 *	The current value of this variable.
 		 */
-		FORCEINLINE UE_NODISCARD VariableType& Get() const
+		UE_NODISCARD FORCEINLINE VariableType& Get() const
 		{
 			TSpecVariablePtr<VariableType> VariablePtr = this->Spec->GetVariable<VariableType>(this->Handle);
 
@@ -460,7 +460,7 @@ public:
 		 * @return
 		 *	The current value of this variable.
 		 */
-		FORCEINLINE UE_NODISCARD VariableType& operator *() const
+		UE_NODISCARD FORCEINLINE VariableType& operator *() const
 		{
 			return this->Get();
 		}
@@ -474,7 +474,7 @@ public:
 		 * @return
 		 *	The current value of this variable.
 		 */
-		FORCEINLINE UE_NODISCARD VariableType& operator ->() const
+		UE_NODISCARD FORCEINLINE VariableType& operator ->() const
 		{
 			return this->Get();
 		}
@@ -531,7 +531,7 @@ private:
 		// =============================================================================================================
 		// Protected Methods
 		// =============================================================================================================
-		FORCEINLINE UE_NODISCARD bool WasGenerated() const
+		UE_NODISCARD FORCEINLINE bool WasGenerated() const
 		{
 			return this->bWasGenerated;
 		}
@@ -684,7 +684,7 @@ private:
 		 * @return
 		 *	The current value of this variable.
 		 */
-		FORCEINLINE UE_NODISCARD VariableType& operator *()
+		UE_NODISCARD FORCEINLINE VariableType& operator *()
 		{
 			return this->Get();
 		}
@@ -698,7 +698,7 @@ private:
 		 * @return
 		 *	The current value of this variable.
 		 */
-		FORCEINLINE UE_NODISCARD VariableType& operator ->()
+		UE_NODISCARD FORCEINLINE VariableType& operator ->()
 		{
 			return this->Get();
 		}
@@ -1343,7 +1343,7 @@ private:
 	 *	The value of the variable.
 	 */
 	template <typename VariableType>
-	FORCEINLINE UE_NODISCARD static TSpecVariablePtr<VariableType> GetVariableFromScope(
+	UE_NODISCARD FORCEINLINE static TSpecVariablePtr<VariableType> GetVariableFromScope(
 		FSpecVariableScope      Variables,
 		const FSpecBlockHandle& Handle)
 	{
@@ -2704,7 +2704,7 @@ private:
 	 *	The value of the variable.
 	 */
 	template <typename VariableType>
-	FORCEINLINE UE_NODISCARD TSpecVariablePtr<VariableType> GetVariable(const FSpecBlockHandle& Handle) const
+	UE_NODISCARD FORCEINLINE TSpecVariablePtr<VariableType> GetVariable(const FSpecBlockHandle& Handle) const
 	{
 		return GetVariableFromScope<VariableType>(this->VariablesInScope, Handle);
 	}
