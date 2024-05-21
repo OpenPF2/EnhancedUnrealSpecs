@@ -11,6 +11,181 @@
 // Macro Declarations
 // =====================================================================================================================
 /**
+ * This macro is for internal use only. Use BEGIN_DEFINE_PF_SPEC instead.
+ */
+#define BEGIN_DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, FileName, LineNumber) \
+	class TClass : public FPF2AutomationSpecBase \
+	{ \
+	public: \
+		TClass(const FString& InName) : FPF2AutomationSpecBase(InName) \
+		{ \
+			static_assert((TFlags)&EAutomationTestFlags::ApplicationContextMask, "AutomationTest has no application flag. It shouldn't run. See AutomationTest.h."); \
+			static_assert((((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::SmokeFilter) || \
+						  (((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::EngineFilter) || \
+						  (((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::ProductFilter) || \
+						  (((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::PerfFilter) || \
+						  (((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::StressFilter) || \
+						  (((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::NegativeFilter), \
+						  "All AutomationTests must have exactly 1 filter type specified. See AutomationTest.h."); \
+		} \
+		virtual uint32 GetTestFlags() const override { return TFlags; } \
+		using FPF2AutomationSpecBase::GetTestSourceFileName; \
+		virtual FString GetTestSourceFileName() const override { return FileName; } \
+		using FPF2AutomationSpecBase::GetTestSourceFileLine; \
+		virtual int32 GetTestSourceFileLine() const override { return LineNumber; } \
+		virtual FString GetTestSourceFileName(const FString&) const override { return GetTestSourceFileName(); } \
+		virtual int32 GetTestSourceFileLine(const FString&) const override { return GetTestSourceFileLine(); } \
+	\
+	protected: \
+		virtual FString GetBeautifiedTestName() const override { return PrettyName; } \
+		virtual void Define() override;
+
+/**
+ * This macro is for internal use only. Use DEFINE_PF_SPEC instead.
+ */
+#define DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, FileName, LineNumber) \
+	BEGIN_DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, FileName, LineNumber) \
+	};
+
+#if WITH_AUTOMATION_WORKER
+	/**
+	 * Defines the necessary boilerplate for a new enhanced automation spec.
+	 *
+	 * This macro is equivalent to Epic's DEFINE_SPEC macro, but using the enhanced automation spec base class instead
+	 * of Epic's original implementation. This macro defines all the boilerplate for the spec class, but without any
+	 * member fields or custom methods. Below invocation of this macro, your code should implement the Define() method.
+	 * See https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine for examples of
+	 * spec declarations and more information.
+	 *
+	 * If you need to declare member fields, use a combination of the BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros
+	 * instead.
+	 *
+	 * @param TClass
+	 *	The name of the automation spec class to define.
+	 * @param PrettyName
+	 *	The name of the automation spec as it should appear in the Session Frontend of Unreal. A period (.) can be used
+	 *	to delimit levels in the tree view/hierarchy of tests.
+	 * @param TFlags
+	 *	A bitfield of flags that identify the type of test. See EAutomationTestFlags for the supported options.
+	 */
+	#define DEFINE_PF_SPEC(TClass, PrettyName, TFlags) \
+		DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__) \
+		namespace\
+		{\
+			TClass TClass##AutomationSpecInstance(TEXT(#TClass));\
+		}
+
+	/**
+	 * Defines the necessary boilerplate for the opening declaration of a new enhanced automation spec.
+	 *
+	 * This macro is equivalent to Epic's BEGIN_DEFINE_SPEC macro, but using the enhanced automation spec base class
+	 * instead of Epic's original implementation. This macro defines the opening declaration for the spec class,
+	 * allowing you to follow up with declarations of any member fields or custom methods needed by your spec. You must
+	 * complete declaration of the spec with the END_DEFINE_PF_SPEC macro. Below the END_DEFINE_PF_SPEC macro
+	 * invocation, your code should implement the Define() method. See
+	 * https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine for examples of spec
+	 * declarations and more information.
+	 *
+	 * If you do not need to declare any member fields or custom methods, use DEFINE_PF_SPEC in place of the
+	 * BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros.
+	 *
+	 * @param TClass
+	 *	The name of the automation spec class being defined.
+	 * @param PrettyName
+	 *	The name of the automation spec as it should appear in the Session Frontend of Unreal. A period (.) can be used
+	 *	to delimit levels in the tree view/hierarchy of tests.
+	 * @param TFlags
+	 *	A bitfield of flags that identify the type of test. See EAutomationTestFlags for the supported options.
+	 */
+	#define BEGIN_DEFINE_PF_SPEC(TClass, PrettyName, TFlags) \
+		BEGIN_DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__)
+
+	/**
+	 * Defines the necessary boilerplate for completing the declaration of a new enhanced automation spec.
+	 *
+	 * This macro is equivalent to Epic's END_DEFINE_SPEC macro, but using the enhanced automation spec base class
+	 * instead of Epic's original implementation. This macro is expected to be used with the BEGIN_DEFINE_PF_SPEC macro,
+	 * and must be invoked after the declaration of any member fields or custom methods of your test.
+	 *
+	 * If you do not need to declare any member fields or custom methods, use DEFINE_PF_SPEC in place of the
+	 * BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros.
+	 *
+	 * @param TClass
+	 *	The name of the automation spec class being defined.
+	 */
+	#define END_DEFINE_PF_SPEC(TClass) \
+		};\
+		namespace\
+		{\
+			TClass TClass##AutomationSpecInstance(TEXT(#TClass));\
+		}
+#else
+	/**
+	 * Defines the necessary boilerplate for a new enhanced automation spec.
+	 *
+	 * This macro is equivalent to Epic's DEFINE_SPEC macro, but using the enhanced automation spec base class instead
+	 * of Epic's original implementation. This macro defines all the boilerplate for the spec class, but without any
+	 * member fields or custom methods. Below invocation of this macro, your code should implement the Define() method.
+	 * See https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine for examples of
+	 * spec declarations and more information.
+	 *
+	 * If you need to declare member fields, use a combination of the BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros
+	 * instead.
+	 *
+	 * @param TClass
+	 *	The name of the automation spec class to define.
+	 * @param PrettyName
+	 *	The name of the automation spec as it should appear in the Session Frontend of Unreal. A period (.) can be used
+	 *	to delimit levels in the tree view/hierarchy of tests.
+	 * @param TFlags
+	 *	A bitfield of flags that identify the type of test. See EAutomationTestFlags for the supported options.
+	 */
+	#define DEFINE_PF_SPEC(TClass, PrettyName, TFlags) \
+		DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__)
+
+	/**
+	 * Defines the necessary boilerplate for the opening declaration of a new enhanced automation spec.
+	 *
+	 * This macro is equivalent to Epic's BEGIN_DEFINE_SPEC macro, but using the enhanced automation spec base class
+	 * instead of Epic's original implementation. This macro defines the opening declaration for the spec class,
+	 * allowing you to follow up with declarations of any member fields or custom methods needed by your spec. You must
+	 * complete declaration of the spec with the END_DEFINE_PF_SPEC macro. Below the END_DEFINE_PF_SPEC macro
+	 * invocation, your code should implement the Define() method. See
+	 * https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine for examples of spec
+	 * declarations and more information.
+	 *
+	 * If you do not need to declare any member fields or custom methods, use DEFINE_PF_SPEC in place of the
+	 * BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros.
+	 *
+	 * @param TClass
+	 *	The name of the automation spec class being defined.
+	 * @param PrettyName
+	 *	The name of the automation spec as it should appear in the Session Frontend of Unreal. A period (.) can be used
+	 *	to delimit levels in the tree view/hierarchy of tests.
+	 * @param TFlags
+	 *	A bitfield of flags that identify the type of test. See EAutomationTestFlags for the supported options.
+	 */
+	#define BEGIN_DEFINE_PF_SPEC(TClass, PrettyName, TFlags) \
+		BEGIN_DEFINE_PF_SPEC_PRIVATE(TClass, PrettyName, TFlags, __FILE__, __LINE__)
+
+	/**
+	 * Defines the necessary boilerplate for completing the declaration of a new enhanced automation spec.
+	 *
+	 * This macro is equivalent to Epic's END_DEFINE_SPEC macro, but using the enhanced automation spec base class
+	 * instead of Epic's original implementation. This macro is expected to be used with the BEGIN_DEFINE_PF_SPEC macro,
+	 * and must be invoked after the declaration of any member fields or custom methods of your test.
+	 *
+	 * If you do not need to declare any member fields or custom methods, use DEFINE_PF_SPEC in place of the
+	 * BEGIN_DEFINE_PF_SPEC and END_DEFINE_PF_SPEC macros.
+	 *
+	 * @param TClass
+	 *	The name of the automation spec class being defined.
+	 */
+	#define END_DEFINE_PF_SPEC(TClass) \
+		};
+#endif
+
+/**
  * Declares a new variable for use in the current test scope and nested scopes.
  *
  * This is an alias for Let() that shortens variable and lambda type definitions.
