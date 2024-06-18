@@ -61,12 +61,17 @@ has been defined).
 
 #### Examples
 ```c++
+#include "EnhancedAutomationSpecBase.h"
+
 BEGIN_DEFINE_ENH_SPEC(FBeforeAllDemoSpec,
-                      "EnhancedUnrealSpecs.BeforeAllDemo",
+                      "EnhancedUnrealSpecs.Demo.BeforeAll",
                       EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask)
-	int32 Test1RunCount(0);
-	int32 Test2RunCount(0);
-	
+	int32 Test1RunCount = 0;
+	int32 Test2RunCount = 0;
+END_DEFINE_ENH_SPEC(FBeforeAllDemoSpec)
+
+void FBeforeAllDemoSpec::Define()
+{
 	Describe("BeforeAll()", [=, this]
 	{
 		Describe("when there are multiple expectations and no BeforeEach blocks", [=, this]
@@ -126,10 +131,8 @@ BEGIN_DEFINE_ENH_SPEC(FBeforeAllDemoSpec,
 			});
 		});		
 	});
-END_DEFINE_ENH_SPEC(FBeforeAllDemoSpec)
+}
 ```
-
-
 
 ### Using `Let` and `RedefineLet()`
 
@@ -190,9 +193,23 @@ To this:
 
 These are taken from `EnhancedAutomationSpecBase.spec.cpp`:
 ```c++
-BEGIN_DEFINE_ENH_SPEC(FLetDemoSpec,
-                      "EnhancedUnrealSpecs.LetDemo",
-                      EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask)	
+#include "EnhancedAutomationSpecBase.h"
+
+DEFINE_ENH_SPEC(FLetDemoSpec,
+                "EnhancedUnrealSpecs.Demo.Let",
+                EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask);
+
+struct FTestObject
+{
+	FString SomeValue;
+
+	explicit FTestObject(const FString& SomeValue) : SomeValue(SomeValue)
+	{
+	}
+};
+
+void FLetDemoSpec::Define()
+{
 	Describe("Let()", [=, this]
 	{
 		Describe("when a variable is defined in a scope", [=, this]
@@ -432,7 +449,7 @@ BEGIN_DEFINE_ENH_SPEC(FLetDemoSpec,
 			});
 		});
 	});
-END_DEFINE_ENH_SPEC(FLetDemoSpec)
+}
 ```
 
 ## Licensing
