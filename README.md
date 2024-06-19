@@ -18,16 +18,99 @@ performance when loading large test suites, at the cost of making test failures 
 
 ### Getting Started
 
-1. Copy `Source/EnhancedAutomationSpecBase.cpp` and `Source/EnhancedAutomationSpecBase.h` into the appropriate part of
-   your Unreal-based project (e.g., `Source/Private/Tests`).
-2. Define specs using the macros described in Epic's
-   [Automation Spec Documentation](https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine),
-   making the following substitutions:
-	- Use the `DEFINE_ENH_SPEC` macro in place of the `DEFINE_SPEC` macro in Epic's documentation.
-	- Use the `BEGIN_DEFINE_ENH_SPEC` macro in place of the `BEGIN_DEFINE_SPEC` macro in Epic's documentation.
-	- Use the `END_DEFINE_ENH_SPEC` macro in place of the `END_DEFINE_SPEC` macro in Epic's documentation.
-3. Use the new features from this project as described in the section below. A full example of the new functionality is
-   included in `Source/EnhancedAutomationSpecBase.spec.cpp`.
+#### Projects Using Git for Source Control
+ 1. Ensure that you have Git installed and in your `PATH`.
+ 2. Ensure that your project is already checked into Git source control.
+ 3. Create a `Plugins/` folder in your Unreal Engine 5.3+ project (a.k.a., "your project"), if that folder does not
+    already exist.
+ 4. Open a terminal in the `Plugins/` folder of your project.
+ 5. Run `git submodule add https://github.com/OpenPF2/EnhancedUnrealSpecs.git EnhancedAutomationSpecs`.
+ 6. Open the `.uproject` file of your project.
+ 7. Ensure there is a `Plugins` section in the file.
+ 8. Add the following section to the `Plugins` section:
+    ```json
+    {
+      "Name": "EnhancedAutomationSpecs",
+      "Enabled": true
+    }
+    ```
+    For example, if your project used the `GameplayAbilities` plugin in addition to `EnhancedAutomationSpecs`, it would
+    look like this:
+    ```json
+    {
+      "Plugins": [
+        {
+          "Name": "GameplayAbilities",
+          "Enabled": true
+        },
+        {
+          "Name": "EnhancedAutomationSpecs",
+          "Enabled": true
+        }
+      ]
+    }
+    ```
+ 9. Confirm you can build and launch your project in the Unreal Editor.
+10. Add and commit the changes that add the submodule and declare the plugin.
+11. Start defining specs! Use the macros described in Epic's
+    [Automation Spec Documentation](https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine),
+    while making the following substitutions:
+    - Use the `DEFINE_ENH_SPEC` macro in place of the `DEFINE_SPEC` macro in Epic's documentation.
+    - Use the `BEGIN_DEFINE_ENH_SPEC` macro in place of the `BEGIN_DEFINE_SPEC` macro in Epic's documentation.
+    - Use the `END_DEFINE_ENH_SPEC` macro in place of the `END_DEFINE_SPEC` macro in Epic's documentation.
+12. Use the new features from this project as described in the section below. A full example of the new functionality is
+    included in `Source/EnhancedAutomationSpecBase.spec.cpp`.
+13. Build and launch your project in the Unreal Editor.
+14. From the menu, select `Tools` -> `Session Frontend`.
+15. Switch to the `Automation` tab.
+16. Find your new tests, and click in the checkbox next to them to mark them for a run.
+17. Click the play icon in the toolbar to start the tests.
+
+#### Projects Using a Different Source Control System (e.g., Perforce) or No Source Control
+ 1. Create a `Plugins/` folder in your Unreal Engine 5.3+ project (a.k.a., "your project"), if that folder does not
+    already exist.
+ 2. Download a release of the source code for this project from
+    [the GitHub releases page](https://github.com/OpenPF2/EnhancedUnrealSpecs/releases).
+ 3. Open the `.uproject` file of your project.
+ 4. Ensure there is a `Plugins` section in the file.
+ 5. Add the following section to the `Plugins` section:
+    ```json
+    {
+      "Name": "EnhancedAutomationSpecs",
+      "Enabled": true
+    }
+    ```
+    For example, if your project used the `GameplayAbilities` plugin in addition to `EnhancedAutomationSpecs`, it would
+    look like this:
+    ```json
+    {
+      "Plugins": [
+        {
+          "Name": "GameplayAbilities",
+          "Enabled": true
+        },
+        {
+          "Name": "EnhancedAutomationSpecs",
+          "Enabled": true
+        }
+      ]
+    }
+    ```
+ 6. Confirm you can build and launch your project in the Unreal Editor.
+ 7. (Optionally) Add and commit the changes that add the submodule and declare the plugin in your VCS.
+ 8. Start defining specs! Use the macros described in Epic's
+    [Automation Spec Documentation](https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine),
+    while making the following substitutions:
+    - Use the `DEFINE_ENH_SPEC` macro in place of the `DEFINE_SPEC` macro in Epic's documentation.
+    - Use the `BEGIN_DEFINE_ENH_SPEC` macro in place of the `BEGIN_DEFINE_SPEC` macro in Epic's documentation.
+    - Use the `END_DEFINE_ENH_SPEC` macro in place of the `END_DEFINE_SPEC` macro in Epic's documentation.
+ 9. Use the new features from this project as described in the section below. A full example of the new functionality is
+    included in `Source/EnhancedAutomationSpecBase.spec.cpp`.
+10. Build and launch your project in the Unreal Editor.
+11. From the menu, select `Tools` -> `Session Frontend`.
+12. Switch to the `Automation` tab.
+13. Find your new tests, and click in the checkbox next to them to mark them for a run.
+14. Click the play icon in the toolbar to start the tests.
 
 ### Using `BeforeAll()`
 
@@ -61,19 +144,24 @@ has been defined).
 
 #### Examples
 ```c++
+#include "EnhancedAutomationSpecBase.h"
+
 BEGIN_DEFINE_ENH_SPEC(FBeforeAllDemoSpec,
-                      "EnhancedUnrealSpecs.BeforeAllDemo",
+                      "EnhancedUnrealSpecs.Demo.BeforeAll",
                       EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask)
-	int32 Test1RunCount(0);
-	int32 Test2RunCount(0);
-	
+	int32 Test1RunCount = 0;
+	int32 Test2RunCount = 0;
+END_DEFINE_ENH_SPEC(FBeforeAllDemoSpec)
+
+void FBeforeAllDemoSpec::Define()
+{
 	Describe("BeforeAll()", [=, this]
 	{
 		Describe("when there are multiple expectations and no BeforeEach blocks", [=, this]
 		{
 			BeforeAll([=, this]
 			{
-				// This is just a simple example of initializing some state once before any expectation below has been 
+				// This is just a simple example of initializing some state once before any expectation below has been
 				// run. You could use this for something more elaborate, like generating synthetic test data or
 				// initializing a database connection. Just be sure that what you initialize here does not get
 				// reinitialized by another `BeforeAll()` block because there is no guarantee that the tests within the
@@ -103,13 +191,13 @@ BEGIN_DEFINE_ENH_SPEC(FBeforeAllDemoSpec,
 				// Second
 				Test2RunCount *= 2;
 			});
-		
+
 			BeforeAll([=, this]
 			{
 				// First
 				++Test2RunCount;
 			});
-			
+
 			BeforeEach([=, this]
 			{
 				// Third
@@ -124,16 +212,14 @@ BEGIN_DEFINE_ENH_SPEC(FBeforeAllDemoSpec,
 				// INCORRECT (Second and Third): (0 * 2) + 1 = 1
 				TestEqual("Test2RunCount", this->Test2RunCount, 3);
 			});
-		});		
+		});
 	});
-END_DEFINE_ENH_SPEC(FBeforeAllDemoSpec)
+}
 ```
-
-
 
 ### Using `Let` and `RedefineLet()`
 
-`Let()` is similar to `let()` [from RSpec](https://rspec.info/features/3-12/rspec-core/helper-methods/let/). It is used 
+`Let()` is similar to `let()` [from RSpec](https://rspec.info/features/3-12/rspec-core/helper-methods/let/). It is used
 to define a variable that is:
 - **Lazily evaluated**, so it is only calculated in a particular expectation the first time its value is needed.
 - **Cached across multiple references in the same expectation**, so it is only calculated once per expectation.
@@ -160,7 +246,7 @@ To this:
 	const TSpecVariable<FString> SomeValue = Let(TGeneratorFunc<FString>([] { return "SomeValue"; }));
 
 	RedefineLet(
-		SomeValue, 
+		SomeValue,
 		TGeneratorRedefineFunc<FString>([](const TSpecVariablePtr<FString>& Previous) { return "NewValue"; })
 	);
 ```
@@ -190,9 +276,23 @@ To this:
 
 These are taken from `EnhancedAutomationSpecBase.spec.cpp`:
 ```c++
-BEGIN_DEFINE_ENH_SPEC(FLetDemoSpec,
-                      "EnhancedUnrealSpecs.LetDemo",
-                      EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask)	
+#include "EnhancedAutomationSpecBase.h"
+
+DEFINE_ENH_SPEC(FLetDemoSpec,
+                "EnhancedUnrealSpecs.Demo.Let",
+                EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask);
+
+struct FTestObject
+{
+	FString SomeValue;
+
+	explicit FTestObject(const FString& SomeValue) : SomeValue(SomeValue)
+	{
+	}
+};
+
+void FLetDemoSpec::Define()
+{
 	Describe("Let()", [=, this]
 	{
 		Describe("when a variable is defined in a scope", [=, this]
@@ -432,7 +532,7 @@ BEGIN_DEFINE_ENH_SPEC(FLetDemoSpec,
 			});
 		});
 	});
-END_DEFINE_ENH_SPEC(FLetDemoSpec)
+}
 ```
 
 ## Licensing

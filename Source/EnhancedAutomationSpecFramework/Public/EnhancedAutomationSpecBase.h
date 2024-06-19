@@ -239,7 +239,9 @@
  * This was adapted and modified from FAutomationSpecBase in the Engine in order to add BeforeAll() and Let()
  * capabilities to automation specs.
  */
-class FEnhancedAutomationSpecBase : public FAutomationTestBase, public TSharedFromThis<FEnhancedAutomationSpecBase>
+class ENHANCEDAUTOMATIONSPECFRAMEWORK_API FEnhancedAutomationSpecBase :
+	public FAutomationTestBase,
+	public TSharedFromThis<FEnhancedAutomationSpecBase>
 {
 public:
 	// =================================================================================================================
@@ -291,7 +293,7 @@ public:
 	/**
 	 * Represents a unique handle/ID for a specific block within an automation test specification.
 	 */
-	struct FSpecBlockHandle
+	struct ENHANCEDAUTOMATIONSPECFRAMEWORK_API FSpecBlockHandle
 	{
 		// =============================================================================================================
 		// Private Fields
