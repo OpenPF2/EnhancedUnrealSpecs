@@ -10,7 +10,7 @@
 
 #include <IAutomationControllerManager.h>
 
-#include <Misc/AutomationTest.h>
+#include "EnhancedAutomationTestCompatibility.h"
 
 // =====================================================================================================================
 // Macro Declarations
@@ -25,20 +25,20 @@
 		TClass(const FString& InName) : FEnhancedAutomationSpecBase(InName, false) \
 		{ \
 			static_assert( \
-				!!((TFlags) & EAutomationTestFlags_ApplicationContextMask), \
+				!!((TFlags) & EnhancedAutomationApplicationContextMask), \
 				"AutomationTest has no application flag.  It shouldn't run.  See AutomationTest.h."); \
 			\
 			static_assert(\
-				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::SmokeFilter) || \
-				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::EngineFilter) || \
-				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::ProductFilter) || \
-				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::PerfFilter) || \
-				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::StressFilter) || \
-				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::NegativeFilter), \
+				!!(((TFlags) & EnhancedAutomationFilterMask) == EAutomationTestFlags::SmokeFilter) || \
+				!!(((TFlags) & EnhancedAutomationFilterMask) == EAutomationTestFlags::EngineFilter) || \
+				!!(((TFlags) & EnhancedAutomationFilterMask) == EAutomationTestFlags::ProductFilter) || \
+				!!(((TFlags) & EnhancedAutomationFilterMask) == EAutomationTestFlags::PerfFilter) || \
+				!!(((TFlags) & EnhancedAutomationFilterMask) == EAutomationTestFlags::StressFilter) || \
+				!!(((TFlags) & EnhancedAutomationFilterMask) == EAutomationTestFlags::NegativeFilter), \
 				"All AutomationTests must have exactly 1 filter type specified.  See AutomationTest.h." \
 			); \
 		} \
-		virtual EAutomationTestFlags GetTestFlags() const override { return TFlags; } \
+		virtual FEnhancedAutomationTestFlags GetTestFlags() const override { return TFlags; } \
 		using FEnhancedAutomationSpecBase::GetTestSourceFileName; \
 		virtual FString GetTestSourceFileName() const override { return FileName; } \
 		using FEnhancedAutomationSpecBase::GetTestSourceFileLine; \

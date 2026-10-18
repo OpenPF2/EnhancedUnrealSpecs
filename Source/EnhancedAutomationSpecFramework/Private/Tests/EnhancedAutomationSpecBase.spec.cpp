@@ -7,7 +7,7 @@
 
 BEGIN_DEFINE_ENH_SPEC(FEnhancedAutomationSpecBaseSpec,
                       "EnhancedUnrealSpecs.EnhancedAutomationSpecBase",
-                      EAutomationTestFlags::ProductFilter | EAutomationTestFlags_ApplicationContextMask)
+                      EAutomationTestFlags::ProductFilter | EnhancedAutomationApplicationContextMask)
 	int32 BeforeAllRunCount1;
 	FString BeforeAllRunOrder1;
 	FString BeforeEachRunOrder1;
