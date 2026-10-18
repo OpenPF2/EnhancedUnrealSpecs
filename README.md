@@ -1,4 +1,4 @@
-# Enhanced Automation Specs for Unreal Engine 5.3+
+# Enhanced Automation Specs for Unreal Engine 5.6+
 
 This is an upgraded version of Epic's
 [Automation Spec](https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine)
@@ -21,7 +21,7 @@ performance when loading large test suites, at the cost of making test failures 
 #### Projects Using Git for Source Control
  1. Ensure that you have Git installed and in your `PATH`.
  2. Ensure that your project is already checked into Git source control.
- 3. Create a `Plugins/` folder in your Unreal Engine 5.3+ project (a.k.a., "your project"), if that folder does not
+ 3. Create a `Plugins/` folder in your Unreal Engine 5.6+ project (a.k.a., "your project"), if that folder does not
     already exist.
  4. Open a terminal in the `Plugins/` folder of your project.
  5. Run `git submodule add https://github.com/OpenPF2/EnhancedUnrealSpecs.git EnhancedAutomationSpecs`.
@@ -148,7 +148,7 @@ has been defined).
 
 BEGIN_DEFINE_ENH_SPEC(FBeforeAllDemoSpec,
                       "EnhancedUnrealSpecs.Demo.BeforeAll",
-                      EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask)
+                      EAutomationTestFlags::ProductFilter | EAutomationTestFlags_ApplicationContextMask)
 	int32 Test1RunCount = 0;
 	int32 Test2RunCount = 0;
 END_DEFINE_ENH_SPEC(FBeforeAllDemoSpec)
@@ -280,7 +280,7 @@ These are taken from `EnhancedAutomationSpecBase.spec.cpp`:
 
 DEFINE_ENH_SPEC(FLetDemoSpec,
                 "EnhancedUnrealSpecs.Demo.Let",
-                EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask);
+                EAutomationTestFlags::ProductFilter | EAutomationTestFlags_ApplicationContextMask);
 
 struct FTestObject
 {

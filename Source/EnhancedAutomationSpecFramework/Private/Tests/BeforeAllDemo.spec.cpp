@@ -2,7 +2,7 @@
 
 BEGIN_DEFINE_ENH_SPEC(FBeforeAllDemoSpec,
                       "EnhancedUnrealSpecs.Demo.BeforeAll",
-                      EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask)
+                      EAutomationTestFlags::ProductFilter | EAutomationTestFlags_ApplicationContextMask)
 	int32 Test1RunCount = 0;
 	int32 Test2RunCount = 0;
 END_DEFINE_ENH_SPEC(FBeforeAllDemoSpec)

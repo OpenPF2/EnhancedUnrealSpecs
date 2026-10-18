@@ -1000,7 +1000,7 @@ TArray<FProgramCounterSymbolInfo> FEnhancedAutomationSpecBase::SkipCallStackWalk
 	TArray<FProgramCounterSymbolInfo> Stack;
 	FProgramCounterSymbolInfo         First;
 
-	TCString<ANSICHAR>::Strcpy(First.Filename, FProgramCounterSymbolInfo::MAX_NAME_LENGTH, "Unknown");
+	TCString<ANSICHAR>::Strncpy(First.Filename, "Unknown", FProgramCounterSymbolInfo::MAX_NAME_LENGTH);
 
 	First.LineNumber = 0;
 	Stack.Add(First);

@@ -24,16 +24,21 @@
 	public: \
 		TClass(const FString& InName) : FEnhancedAutomationSpecBase(InName, false) \
 		{ \
-			static_assert((TFlags)&EAutomationTestFlags::ApplicationContextMask, "AutomationTest has no application flag. It shouldn't run. See AutomationTest.h."); \
-			static_assert((((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::SmokeFilter) || \
-						  (((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::EngineFilter) || \
-						  (((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::ProductFilter) || \
-						  (((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::PerfFilter) || \
-						  (((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::StressFilter) || \
-						  (((TFlags)&EAutomationTestFlags::FilterMask) == EAutomationTestFlags::NegativeFilter), \
-						  "All AutomationTests must have exactly 1 filter type specified. See AutomationTest.h."); \
+			static_assert( \
+				!!((TFlags) & EAutomationTestFlags_ApplicationContextMask), \
+				"AutomationTest has no application flag.  It shouldn't run.  See AutomationTest.h."); \
+			\
+			static_assert(\
+				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::SmokeFilter) || \
+				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::EngineFilter) || \
+				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::ProductFilter) || \
+				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::PerfFilter) || \
+				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::StressFilter) || \
+				!!(((TFlags) & EAutomationTestFlags_FilterMask) == EAutomationTestFlags::NegativeFilter), \
+				"All AutomationTests must have exactly 1 filter type specified.  See AutomationTest.h." \
+			); \
 		} \
-		virtual uint32 GetTestFlags() const override { return TFlags; } \
+		virtual EAutomationTestFlags GetTestFlags() const override { return TFlags; } \
 		using FEnhancedAutomationSpecBase::GetTestSourceFileName; \
 		virtual FString GetTestSourceFileName() const override { return FileName; } \
 		using FEnhancedAutomationSpecBase::GetTestSourceFileLine; \
@@ -432,7 +437,7 @@ public:
 		 * @return
 		 *	The block handle for this variable.
 		 */
-		UE_NODISCARD FORCEINLINE FSpecBlockHandle GetHandle() const
+		[[nodiscard]] FORCEINLINE FSpecBlockHandle GetHandle() const
 		{
 			return this->Handle;
 		}
@@ -446,7 +451,7 @@ public:
 		 * @return
 		 *	The current value of this variable.
 		 */
-		UE_NODISCARD FORCEINLINE VariableType& Get() const
+		[[nodiscard]] FORCEINLINE VariableType& Get() const
 		{
 			// ReSharper disable once CppRedundantTemplateKeyword
 			TSpecVariablePtr<VariableType> VariablePtr = this->Spec->template GetVariable<VariableType>(this->Handle);
@@ -463,7 +468,7 @@ public:
 		 * @return
 		 *	The current value of this variable.
 		 */
-		UE_NODISCARD FORCEINLINE VariableType& operator *() const
+		[[nodiscard]] FORCEINLINE VariableType& operator *() const
 		{
 			return this->Get();
 		}
@@ -477,7 +482,7 @@ public:
 		 * @return
 		 *	The current value of this variable.
 		 */
-		UE_NODISCARD FORCEINLINE VariableType& operator ->() const
+		[[nodiscard]] FORCEINLINE VariableType& operator ->() const
 		{
 			return this->Get();
 		}
@@ -534,7 +539,7 @@ private:
 		// =============================================================================================================
 		// Protected Methods
 		// =============================================================================================================
-		UE_NODISCARD FORCEINLINE bool WasGenerated() const
+		[[nodiscard]] FORCEINLINE bool WasGenerated() const
 		{
 			return this->bWasGenerated;
 		}
@@ -667,7 +672,7 @@ private:
 		 * @return
 		 *	The value of this variable.
 		 */
-		UE_NODISCARD VariableType& Get()
+		[[nodiscard]] VariableType& Get()
 		{
 			if (!this->WasGenerated())
 			{
@@ -687,7 +692,7 @@ private:
 		 * @return
 		 *	The current value of this variable.
 		 */
-		UE_NODISCARD FORCEINLINE VariableType& operator *()
+		[[nodiscard]] FORCEINLINE VariableType& operator *()
 		{
 			return this->Get();
 		}
@@ -701,7 +706,7 @@ private:
 		 * @return
 		 *	The current value of this variable.
 		 */
-		UE_NODISCARD FORCEINLINE VariableType& operator ->()
+		[[nodiscard]] FORCEINLINE VariableType& operator ->()
 		{
 			return this->Get();
 		}
@@ -1346,7 +1351,7 @@ private:
 	 *	The value of the variable.
 	 */
 	template <typename VariableType>
-	UE_NODISCARD FORCEINLINE static TSpecVariablePtr<VariableType> GetVariableFromScope(
+	[[nodiscard]] FORCEINLINE static TSpecVariablePtr<VariableType> GetVariableFromScope(
 		FSpecVariableScope      Variables,
 		const FSpecBlockHandle& Handle)
 	{
@@ -2707,7 +2712,7 @@ private:
 	 *	The value of the variable.
 	 */
 	template <typename VariableType>
-	UE_NODISCARD FORCEINLINE TSpecVariablePtr<VariableType> GetVariable(const FSpecBlockHandle& Handle) const
+	[[nodiscard]] FORCEINLINE TSpecVariablePtr<VariableType> GetVariable(const FSpecBlockHandle& Handle) const
 	{
 		return GetVariableFromScope<VariableType>(this->VariablesInScope, Handle);
 	}

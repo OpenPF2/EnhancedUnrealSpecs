@@ -2,7 +2,7 @@
 
 DEFINE_ENH_SPEC(FLetDemoSpec,
                 "EnhancedUnrealSpecs.Demo.Let",
-                EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask);
+                EAutomationTestFlags::ProductFilter | EAutomationTestFlags_ApplicationContextMask);
 
 struct FTestObject
 {
