@@ -1,4 +1,4 @@
-# Enhanced Automation Specs for Unreal Engine 5.3+
+# Enhanced Automation Specs for Unreal Engine 5.3 through 5.8
 
 This is an upgraded version of Epic's
 [Automation Spec](https://dev.epicgames.com/documentation/en-us/unreal-engine/automation-spec-in-unreal-engine)
@@ -6,6 +6,11 @@ framework with additional functionality that was inspired by [RSpec](https://rsp
 `BeforeAll` and `Let` blocks. The code in this repository is an MIT-licensed fork of code that was originally
 implemented in the OpenPF2 project under an MPL license, to make this code easier to reuse in proprietary, commercial
 projects.
+
+The compatibility matrix targets Win64 with UE 5.3.2, 5.4.4, 5.5.4, 5.6.1, 5.7.4, and 5.8.3. Other platforms and patch
+releases require separate validation. `FEnhancedAutomationTestFlags`, `EnhancedAutomationApplicationContextMask`, and
+`EnhancedAutomationFilterMask` bridge the integer automation flags before UE 5.5 and the scoped enum in later engines.
+The declaration macros retain the same invocation syntax across these versions.
 
 ## Why Does This Look Like a Rewrite of Automation Spec?
 Epic did not design the original version of Automation Spec to be open for extension, so the version of Automation Spec
@@ -21,7 +26,7 @@ performance when loading large test suites, at the cost of making test failures 
 #### Projects Using Git for Source Control
  1. Ensure that you have Git installed and in your `PATH`.
  2. Ensure that your project is already checked into Git source control.
- 3. Create a `Plugins/` folder in your Unreal Engine 5.3+ project (a.k.a., "your project"), if that folder does not
+ 3. Create a `Plugins/` folder in your Unreal Engine 5.3 through 5.8 project (a.k.a., "your project"), if that folder does not
     already exist.
  4. Open a terminal in the `Plugins/` folder of your project.
  5. Run `git submodule add https://github.com/OpenPF2/EnhancedUnrealSpecs.git EnhancedAutomationSpecs`.
@@ -67,7 +72,7 @@ performance when loading large test suites, at the cost of making test failures 
 17. Click the play icon in the toolbar to start the tests.
 
 #### Projects Using a Different Source Control System (e.g., Perforce) or No Source Control
- 1. Create a `Plugins/` folder in your Unreal Engine 5.3+ project (a.k.a., "your project"), if that folder does not
+ 1. Create a `Plugins/` folder in your Unreal Engine 5.3 through 5.8 project (a.k.a., "your project"), if that folder does not
     already exist.
  2. Download a release of the source code for this project from
     [the GitHub releases page](https://github.com/OpenPF2/EnhancedUnrealSpecs/releases).
@@ -148,7 +153,7 @@ has been defined).
 
 BEGIN_DEFINE_ENH_SPEC(FBeforeAllDemoSpec,
                       "EnhancedUnrealSpecs.Demo.BeforeAll",
-                      EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask)
+                      EAutomationTestFlags::ProductFilter | EnhancedAutomationApplicationContextMask)
 	int32 Test1RunCount = 0;
 	int32 Test2RunCount = 0;
 END_DEFINE_ENH_SPEC(FBeforeAllDemoSpec)
@@ -280,7 +285,7 @@ These are taken from `EnhancedAutomationSpecBase.spec.cpp`:
 
 DEFINE_ENH_SPEC(FLetDemoSpec,
                 "EnhancedUnrealSpecs.Demo.Let",
-                EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask);
+                EAutomationTestFlags::ProductFilter | EnhancedAutomationApplicationContextMask);
 
 struct FTestObject
 {

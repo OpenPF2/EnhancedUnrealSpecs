@@ -1,4 +1,4 @@
-﻿// Enhanced Automation Specs for UE, Copyright 2023-2024, Guy Elsmore-Paddock. All Rights Reserved.
+﻿// Enhanced Automation Specs for UE, Copyright 2023-2026, Guy Elsmore-Paddock. All Rights Reserved.
 //
 // This Source Code Form is subject to the terms of the MIT License. If a copy of the license was not distributed with
 // this file, you can obtain one at https://github.com/OpenPF2/EnhancedUnrealSpecs/blob/main/LICENSE.txt.
@@ -7,7 +7,7 @@
 
 BEGIN_DEFINE_ENH_SPEC(FEnhancedAutomationSpecBaseSpec,
                       "EnhancedUnrealSpecs.EnhancedAutomationSpecBase",
-                      EAutomationTestFlags::ProductFilter | EAutomationTestFlags::ApplicationContextMask)
+                      EAutomationTestFlags::ProductFilter | EnhancedAutomationApplicationContextMask)
 	int32 BeforeAllRunCount1;
 	FString BeforeAllRunOrder1;
 	FString BeforeEachRunOrder1;

@@ -1,4 +1,4 @@
-// Enhanced Automation Specs for UE, Copyright 2023-2024, Guy Elsmore-Paddock. All Rights Reserved.
+// Enhanced Automation Specs for UE, Copyright 2023-2026, Guy Elsmore-Paddock. All Rights Reserved.
 //
 // This Source Code Form is subject to the terms of the MIT License. If a copy of the license was not distributed with
 // this file, you can obtain one at https://github.com/OpenPF2/EnhancedUnrealSpecs/blob/main/LICENSE.txt.
@@ -1000,7 +1000,7 @@ TArray<FProgramCounterSymbolInfo> FEnhancedAutomationSpecBase::SkipCallStackWalk
 	TArray<FProgramCounterSymbolInfo> Stack;
 	FProgramCounterSymbolInfo         First;
 
-	TCString<ANSICHAR>::Strcpy(First.Filename, FProgramCounterSymbolInfo::MAX_NAME_LENGTH, "Unknown");
+	TCString<ANSICHAR>::Strncpy(First.Filename, "Unknown", FProgramCounterSymbolInfo::MAX_NAME_LENGTH);
 
 	First.LineNumber = 0;
 	Stack.Add(First);
